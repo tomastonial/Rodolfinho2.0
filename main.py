@@ -35,14 +35,23 @@ def start():
     posicaoXFundo2 = 1000
     posicaoYFundo2 = 0
 
-    bola_pos = (500, 350)
-
+    xBola = 500
+    yBola = 270
     while True:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
+        for evento in pygame.event.get():
+            if evento.type == pygame.QUIT:
                 pygame.quit()
                 quit()
+            elif evento.type == pygame.KEYDOWN and evento.key == pygame.K_UP:
+                yBola -= 50
+            elif evento.type == pygame.KEYDOWN and evento.key == pygame.K_DOWN:
+                yBola += 50
 
+            elif yBola >= 400:
+                yBola = 399
+            elif yBola <= 300:
+                yBola = 301
+        bola_pos = (xBola, yBola)
         tela.fill(branco)
         tela.blit(fundo, (posicaoXFundo, posicaoYFundo))
         tela.blit(fundo2, (posicaoXFundo2, posicaoYFundo2))
