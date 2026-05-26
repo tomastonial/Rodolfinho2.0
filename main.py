@@ -38,24 +38,29 @@ def start():
     posicaoYFundo2 = 0
 
     xBola = 500
-    yBola = 400
+    yBola = 143.75 # Faixa 1
+    yBola = 212.5 # Meio da Faixa de cima
+    yBola = 281.25 # Faixa 2
+    yBola = 350 # Meio da Faixa do meio
+    yBola = 418.75 # Faixa 3
+    yBola = 487.5 # Meio da Faixa de baixo
+    yBola = 556.25 # Faixa 4
+    
     while True:
         for evento in pygame.event.get():
             if evento.type == pygame.QUIT:
                 pygame.quit()
                 quit()
             elif evento.type == pygame.KEYDOWN and evento.key == pygame.K_UP:
-                if yBola == 400:
-                    yBola -= 100
+                if yBola == 143.75:
+                    yBola = 143.75
                 else:
-                    yBola -= 75
+                    yBola -= 137.5
             elif evento.type == pygame.KEYDOWN and evento.key == pygame.K_DOWN:
-                yBola += 75
-
-            # elif yBola >= 400:
-            #     yBola = 399
-            # elif yBola <= 300:
-            #     yBola = 301
+                if yBola == 556.25:
+                    yBola = 556.25
+                else:
+                    yBola += 137.5
         bola_pos = (xBola, yBola)
         tela.fill(branco)
         tela.blit(fundo, (posicaoXFundo, posicaoYFundo))
