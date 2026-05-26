@@ -38,6 +38,8 @@ carroVerde = pygame.image.load("bases/CarroG.png")
 carroVerde = pygame.transform.scale(carroVerde, (100, 137.5))
 carroVerdeD = pygame.transform.rotate(carroVerde, 90)
 carroVerdeE = pygame.transform.rotate(carroVerde, -90)
+cachorro = pygame.image.load("bases/cachorrosemfundo.png")
+cachorro = pygame.transform.rotate(cachorro, -90)
 fps = pygame.time.Clock()
 
 
@@ -49,14 +51,21 @@ def start():
     posicaoXFundo2 = 1000
     posicaoYFundo2 = 0
 
-    xBola = 500
-    yBola = 143.75 # Faixa 1
-    yBola = 212.5 # Meio da Faixa de cima
-    yBola = 281.25 # Faixa 2
-    yBola = 350 # Meio da Faixa do meio
-    yBola = 418.75 # Faixa 3
-    yBola = 487.5 # Meio da Faixa de baixo
-    yBola = 556.25 # Faixa 4
+    yDogFaixa1 = 80
+    yDogFaixa2 = 220
+    yDogFaixa3 = 360
+    yDogFaixa4 = 500
+
+    yMovDog = 140
+
+    xDog = 500
+    # yDog = 143.75 # Faixa 1
+    # yDog = 212.5 # Meio da Faixa de cima
+    yDog = 220 # Faixa 2
+    # yDog = 350 # Meio da Faixa do meio
+    # yDog = 418.75 # Faixa 3
+    # yDog = 487.5 # Meio da Faixa de baixo
+    # yDog = 556.25 # Faixa 4
     # Faixa 1 para carros -> 95
     # Faixa 2 para carros -> 235
     # Faixa 3 para carros -> 365
@@ -87,16 +96,16 @@ def start():
                 pygame.quit()
                 quit()
             elif evento.type == pygame.KEYDOWN and evento.key == pygame.K_UP:
-                if yBola == 143.75:
-                    yBola = 143.75
+                if yDog <= yDogFaixa1:
+                    yDog = yDogFaixa1
                 else:
-                    yBola -= 137.5
+                    yDog -= yMovDog
             elif evento.type == pygame.KEYDOWN and evento.key == pygame.K_DOWN:
-                if yBola == 556.25:
-                    yBola = 556.25
+                if yDog >= yDogFaixa4:
+                    yDog = yDogFaixa4
                 else:
-                    yBola += 137.5
-        bola_pos = (xBola, yBola)
+                    yDog += yMovDog
+        Dog_pos = (xDog, yDog)
         tela.fill(branco)
         tela.blit(fundo, (posicaoXFundo, posicaoYFundo))
         tela.blit(fundo2, (posicaoXFundo2, posicaoYFundo2))
@@ -106,14 +115,13 @@ def start():
             posicaoXFundo = 1000
         if posicaoXFundo2 <= -1000:
             posicaoXFundo2 = 1000
-        pygame.draw.circle(tela, preto, bola_pos, 20)
         # Movimento do carro azul
+
+        tela.blit(cachorro, (Dog_pos))
         if yCarroB == 95 or yCarroB == 235:
-            print("Vai pra esquerda")
             tela.blit(carroAzulE, (xCarroB, yCarroB))
             xCarroB -= 2
         else:
-            print("Vai pra direita")
             tela.blit(carroAzulD, (xCarroB, yCarroB))
             xCarroB += 2
         if xCarroB < -200 or xCarroB > 1200:

@@ -1,4 +1,4 @@
-import os,time,random, json
+import os,time,random, json, pygame
 from datetime import datetime
 
 def limparTela():
@@ -30,6 +30,13 @@ def escreverDados(nome, pontos):
         banco.open("base.atitus", "w")
         banco.write(json.dumps(dadosDict))
         banco.close()
+
+def perdeu():
+    print("VOCÊ PERDEU!")
+    aguardar(2)
+    limparTela()
+    pygame.quit()
+    quit()
 
 def maiorPontuador():
     banco = open("base.atitus", "r")
