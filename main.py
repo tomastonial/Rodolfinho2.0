@@ -26,6 +26,15 @@ imagem2 = pygame.image.load("bases/Rua.jpg")
 imagem2 = pygame.transform.rotate(imagem2, 90)
 fundo = pygame.transform.scale(imagem, tamanho)
 fundo2 = pygame.transform.scale(imagem2, tamanho)
+carroAzul = pygame.image.load("bases/CarroB.png")
+carroAzul = pygame.transform.scale(carroAzul, (100, 137.5))
+carroAzul = pygame.transform.rotate(carroAzul, 90)
+carroVermelho = pygame.image.load("bases/CarroR.png")
+carroVermelho = pygame.transform.scale(carroVermelho, (100, 137.5))
+carroVermelho = pygame.transform.rotate(carroVermelho, 90)
+carroVerde = pygame.image.load("bases/CarroG.png")
+carroVerde = pygame.transform.scale(carroVerde, (100, 137.5))
+carroVerde = pygame.transform.rotate(carroVerde, 90)
 fps = pygame.time.Clock()
 
 
@@ -72,6 +81,9 @@ def start():
         if posicaoXFundo2 <= -1000:
             posicaoXFundo2 = 1000
         pygame.draw.circle(tela, preto, bola_pos, 20)
+        tela.blit(carroAzul, (700, 225))
+        tela.blit(carroVermelho, (700, 362.5))
+        tela.blit(carroVerde, (700, 500))
         fps.tick(320)   
         pygame.display.update()
 
