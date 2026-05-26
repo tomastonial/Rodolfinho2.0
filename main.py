@@ -20,8 +20,10 @@ relogio = pygame.time.Clock()
 tela = pygame.display.set_mode(tamanho)
 branco = (255,255,255)
 preto = (0,0,0)
-imagem = pygame.image.load("bases/fundoRua.png")
-imagem2 = pygame.image.load("bases/fundoRua.png")
+imagem = pygame.image.load("bases/Rua.jpg")
+imagem = pygame.transform.rotate(imagem, 90)
+imagem2 = pygame.image.load("bases/Rua.jpg")
+imagem2 = pygame.transform.rotate(imagem2, 90)
 fundo = pygame.transform.scale(imagem, tamanho)
 fundo2 = pygame.transform.scale(imagem2, tamanho)
 fps = pygame.time.Clock()
@@ -36,21 +38,24 @@ def start():
     posicaoYFundo2 = 0
 
     xBola = 500
-    yBola = 270
+    yBola = 400
     while True:
         for evento in pygame.event.get():
             if evento.type == pygame.QUIT:
                 pygame.quit()
                 quit()
             elif evento.type == pygame.KEYDOWN and evento.key == pygame.K_UP:
-                yBola -= 50
+                if yBola == 400:
+                    yBola -= 100
+                else:
+                    yBola -= 75
             elif evento.type == pygame.KEYDOWN and evento.key == pygame.K_DOWN:
-                yBola += 50
+                yBola += 75
 
-            elif yBola >= 400:
-                yBola = 399
-            elif yBola <= 300:
-                yBola = 301
+            # elif yBola >= 400:
+            #     yBola = 399
+            # elif yBola <= 300:
+            #     yBola = 301
         bola_pos = (xBola, yBola)
         tela.fill(branco)
         tela.blit(fundo, (posicaoXFundo, posicaoYFundo))
