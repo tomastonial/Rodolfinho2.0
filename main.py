@@ -28,7 +28,8 @@ fundo = pygame.transform.scale(imagem, tamanho)
 fundo2 = pygame.transform.scale(imagem2, tamanho)
 carroAzul = pygame.image.load("bases/CarroB.png")
 carroAzul = pygame.transform.scale(carroAzul, (100, 137.5))
-carroAzul = pygame.transform.rotate(carroAzul, 90)
+carroAzulD = pygame.transform.rotate(carroAzul, 90)
+carroAzulE = pygame.transform.rotate(carroAzul, -90)
 carroVermelho = pygame.image.load("bases/CarroR.png")
 carroVermelho = pygame.transform.scale(carroVermelho, (100, 137.5))
 carroVermelho = pygame.transform.rotate(carroVermelho, 90)
@@ -54,7 +55,22 @@ def start():
     yBola = 418.75 # Faixa 3
     yBola = 487.5 # Meio da Faixa de baixo
     yBola = 556.25 # Faixa 4
-    
+    # Faixa 1 para carros -> 95
+    # Faixa 2 para carros -> 235
+    # Faixa 3 para carros -> 365
+    # Faixa 4 para carros -> 505
+    faixas = [95, 235, 365, 505]
+    yCarroR = 365
+    yCarroG = 235
+    yCarroB = random.choice(faixas)
+    xCarroB = 300
+    xCarroR = 0
+    xCarroG = 0
+    if yCarroB == 95 or yCarroB == 235:
+        print("Vai pra esquerda")
+        xCarroB = 1000
+    else:
+        xCarro = 0
     while True:
         for evento in pygame.event.get():
             if evento.type == pygame.QUIT:
@@ -81,10 +97,25 @@ def start():
         if posicaoXFundo2 <= -1000:
             posicaoXFundo2 = 1000
         pygame.draw.circle(tela, preto, bola_pos, 20)
-        tela.blit(carroAzul, (700, 225))
-        tela.blit(carroVermelho, (700, 362.5))
-        tela.blit(carroVerde, (700, 500))
-        fps.tick(320)   
+        if yCarroB == 95 or yCarroB == 235:
+            print("Vai pra esquerda")
+            tela.blit(carroAzulE, (xCarroB, yCarroB))
+            xCarroB -= 2
+        else:
+            print("Vai pra direita")
+            tela.blit(carroAzulD, (xCarroB, yCarroB))
+            xCarroB += 2
+        if xCarroB < -200 or xCarroB > 1200:
+
+            yCarroB = random.choice(faixas)
+
+            if yCarroB in [95, 235]:
+                xCarroB = 1000
+            else:
+                xCarroB = -100
+        tela.blit(carroVermelho, (700, yCarroR))
+        tela.blit(carroVerde, (700, yCarroG))
+        fps.tick(120)   
         pygame.display.update()
 
 start()
