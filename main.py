@@ -162,6 +162,14 @@ def start():
                 xCarroG = 1000
             else:
                 xCarroG = -100
+        hitBoxDog = pygame.Rect(xDog, yDog, 100, 137.5)
+        hitBoxCarroB = pygame.Rect(xCarroB, yCarroB, 100, 60)
+        hitBoxCarroR = pygame.Rect(xCarroR, yCarroR, 100, 60)
+        hitBoxCarroG = pygame.Rect(xCarroG, yCarroG, 100, 60)
+        morte = pygame.Rect.colliderect(hitBoxDog, hitBoxCarroB) or pygame.Rect.colliderect(hitBoxDog, hitBoxCarroR) or pygame.Rect.colliderect(hitBoxDog, hitBoxCarroG)
+        if morte:
+            print("Morreu")
+            quit()
         fps.tick(120)   
         pygame.display.update()
 
