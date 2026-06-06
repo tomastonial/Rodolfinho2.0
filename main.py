@@ -16,6 +16,7 @@ pygame.init()
 tamanho = (1000, 700)
 pygame.display.set_caption("RODOLFO")
 
+fonte = pygame.font.SysFont("Arial", 30)
 relogio = pygame.time.Clock()
 tela = pygame.display.set_mode(tamanho)
 branco = (255,255,255)
@@ -26,6 +27,8 @@ imagem2 = pygame.image.load("bases/Rua.jpg")
 imagem2 = pygame.transform.rotate(imagem2, 90)
 fundo = pygame.transform.scale(imagem, tamanho)
 fundo2 = pygame.transform.scale(imagem2, tamanho)
+img_pause = pygame.image.load("bases/imagem_pause.png")
+img_inicio = pygame.image.load("bases/imagem_inicio.png")
 carroAzul = pygame.image.load("bases/CarroB.png")
 carroAzul = pygame.transform.scale(carroAzul, (100, 137.5))
 carroAzulD = pygame.transform.rotate(carroAzul, 90)
@@ -40,16 +43,70 @@ carroVerdeD = pygame.transform.rotate(carroVerde, 90)
 carroVerdeE = pygame.transform.rotate(carroVerde, -90)
 cachorro = pygame.image.load("bases/cachorrosemfundo.png")
 cachorro = pygame.transform.rotate(cachorro, -90)
+frasePause = fonte.render("PRESSIONE ESC PARA VOLTAR", True, preto)
+rodando = True
+pausado = False
 fps = pygame.time.Clock()
+
+# def mostrarMaiorPontuador():
+
+def inicio():
+    startButton = pygame.Rect(378, 348, 254, 60)
+    maiorButton = pygame.Rect(378, 428, 254, 60)
+    quitButton = pygame.Rect(378, 508, 254, 60)
+
+    mouse_pos = pygame.mouse.get_pos()
+
+    if (startButton.collidepoint(mouse_pos)
+        or maiorButton.collidepoint(mouse_pos)
+        or quitButton.collidepoint(mouse_pos)):
+
+        pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
+
+    else:
+        pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
+
+    for evento in pygame.event.get():
+        if evento.type == pygame.MOUSEBUTTONDOWN:
+            if startButton.collidepoint(evento.pos):
+                start()
+            elif maiorButton.collidepoint(evento.pos):
+                print(f"MAIOR PONTUADOR: {nome_maior} - {maior_pontos} pontos - {dataJogada}")
+            elif quitButton.collidepoint(evento.pos):
+                pygame.quit()
+                quit()
+            elif evento.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+
+    tela.blit(img_inicio, (0,0))
+    pygame.display.update()
+
+
+
+def pause():
+    tela.blit(img_pause, (0,0))
+    tela.blit(frasePause, (275, 620))
+    pygame.display.update()
 
 
 def start():
+    
+    ultimo_ponto = pygame.time.get_ticks()
+    pontos = 0
+    frasePontos = fonte.render(f"PONTOS: {pontos}", True, branco)
 
     posicaoXFundo = 0
     posicaoYFundo = 0
 
     posicaoXFundo2 = 1000
     posicaoYFundo2 = 0
+
+    velocidadeFundo = 1
+    velocidadeCarroAzul = 2
+    velocidadeCarroVermelho = 3
+    velocidadeCarroVerde = 4
+
 
     yDogFaixa1 = 80
     yDogFaixa2 = 220
@@ -77,6 +134,7 @@ def start():
     xCarroB = 0
     xCarroR = 0
     xCarroG = 0
+
     # Posiçao inicial dos carros
     if yCarroB == 95 or yCarroB == 235:
         xCarroB = 1000
@@ -87,10 +145,15 @@ def start():
     else:
         xCarroR = 0
     if yCarroG == 95 or yCarroG == 235:
-        xCarroG = 1000  
+        xCarroG = 1000
     else:
         xCarroG = 0
     while True:
+        agora = pygame.time.get_ticks()
+        if agora - ultimo_ponto >= 1000:
+            pontos += 1
+            frasePontos = fonte.render(f"PONTOS: {pontos}", True, branco)
+            ultimo_ponto = agora
         for evento in pygame.event.get():
             if evento.type == pygame.QUIT:
                 pygame.quit()
@@ -105,12 +168,26 @@ def start():
                     yDog = yDogFaixa4
                 else:
                     yDog += yMovDog
+            elif evento.type == pygame.KEYDOWN and evento.key == pygame.K_ESCAPE:
+                pausado = True
+                pause()
+                while pausado:
+                    for evento in pygame.event.get():
+                        if  evento.type == pygame.KEYDOWN and evento.key == pygame.K_ESCAPE:
+                            pausado = False
+                        elif evento.type == pygame.QUIT:
+                            pygame.quit()
+                            quit()
+                pause()
+
+
         Dog_pos = (xDog, yDog)
         tela.fill(branco)
         tela.blit(fundo, (posicaoXFundo, posicaoYFundo))
         tela.blit(fundo2, (posicaoXFundo2, posicaoYFundo2))
-        posicaoXFundo -= 1
-        posicaoXFundo2 -= 1
+        tela.blit(frasePontos, (10, 10))
+        posicaoXFundo -= velocidadeFundo
+        posicaoXFundo2 -= velocidadeFundo
         if posicaoXFundo <= -1000:
             posicaoXFundo = 1000
         if posicaoXFundo2 <= -1000:
@@ -120,10 +197,10 @@ def start():
         tela.blit(cachorro, (Dog_pos))
         if yCarroB == 95 or yCarroB == 235:
             tela.blit(carroAzulE, (xCarroB, yCarroB))
-            xCarroB -= 2
+            xCarroB -= velocidadeCarroAzul
         else:
             tela.blit(carroAzulD, (xCarroB, yCarroB))
-            xCarroB += 2
+            xCarroB += velocidadeCarroAzul
         if xCarroB < -200 or xCarroB > 1200:
 
             yCarroB = random.choice(faixas)
@@ -135,10 +212,10 @@ def start():
         # Movimento do carro vermelho
         if yCarroR == 95 or yCarroR == 235:
             tela.blit(carroVermelhoE, (xCarroR, yCarroR))
-            xCarroR -= 3
+            xCarroR -= velocidadeCarroVermelho
         else:
             tela.blit(carroVermelhoD, (xCarroR, yCarroR))
-            xCarroR += 3
+            xCarroR += velocidadeCarroVermelho
         if xCarroR < -200 or xCarroR > 1200:
 
             yCarroR = random.choice(faixas)
@@ -150,10 +227,10 @@ def start():
         # Movimento do carro verde
         if yCarroG == 95 or yCarroG == 235:
             tela.blit(carroVerdeE, (xCarroG, yCarroG))
-            xCarroG -= 4
+            xCarroG -= velocidadeCarroVerde
         else:
             tela.blit(carroVerdeD, (xCarroG, yCarroG))
-            xCarroG += 4
+            xCarroG += velocidadeCarroVerde
         if xCarroG < -200 or xCarroG > 1200:
 
             yCarroG = random.choice(faixas)
@@ -173,4 +250,5 @@ def start():
         fps.tick(120)   
         pygame.display.update()
 
-start()
+while rodando:
+    inicio()
