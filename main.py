@@ -43,7 +43,8 @@ carroVerdeD = pygame.transform.rotate(carroVerde, 90)
 carroVerdeE = pygame.transform.rotate(carroVerde, -90)
 cachorro = pygame.image.load("bases/cachorrosemfundo.png")
 cachorro = pygame.transform.rotate(cachorro, -90)
-frasePause = fonte.render("PRESSIONE ESC PARA VOLTAR", True, preto)
+frasePause = fonte.render("PRESS SPACE TO PAUSE", True, branco)
+fraseResume = fonte.render("PRESSIONE SPACE PARA VOLTAR", True, branco)
 rodando = True
 pausado = False
 fps = pygame.time.Clock()
@@ -53,13 +54,11 @@ fps = pygame.time.Clock()
 def inicio():
     startButton = pygame.Rect(378, 348, 254, 60)
     maiorButton = pygame.Rect(378, 428, 254, 60)
-    quitButton = pygame.Rect(378, 508, 254, 60)
 
     mouse_pos = pygame.mouse.get_pos()
 
     if (startButton.collidepoint(mouse_pos)
-        or maiorButton.collidepoint(mouse_pos)
-        or quitButton.collidepoint(mouse_pos)):
+        or maiorButton.collidepoint(mouse_pos)):
 
         pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
 
@@ -72,13 +71,13 @@ def inicio():
                 start()
             elif maiorButton.collidepoint(evento.pos):
                 print(f"MAIOR PONTUADOR: {nome_maior} - {maior_pontos} pontos - {dataJogada}")
-            elif quitButton.collidepoint(evento.pos):
+        elif evento.type == pygame.KEYDOWN and evento.key == pygame.K_ESCAPE:
+            pygame.quit()
+            quit()
+        elif evento.type == pygame.QUIT:
                 pygame.quit()
                 quit()
-            elif evento.type == pygame.QUIT:
-                pygame.quit()
-                quit()
-
+            
     tela.blit(img_inicio, (0,0))
     pygame.display.update()
 
@@ -86,7 +85,7 @@ def inicio():
 
 def pause():
     tela.blit(img_pause, (0,0))
-    tela.blit(frasePause, (275, 620))
+    tela.blit(fraseResume, (320, 650))
     pygame.display.update()
 
 
@@ -168,17 +167,20 @@ def start():
                     yDog = yDogFaixa4
                 else:
                     yDog += yMovDog
-            elif evento.type == pygame.KEYDOWN and evento.key == pygame.K_ESCAPE:
+            elif evento.type == pygame.KEYDOWN and evento.key == pygame.K_SPACE:
                 pausado = True
                 pause()
                 while pausado:
                     for evento in pygame.event.get():
-                        if  evento.type == pygame.KEYDOWN and evento.key == pygame.K_ESCAPE:
+                        if  evento.type == pygame.KEYDOWN and evento.key == pygame.K_SPACE:
                             pausado = False
                         elif evento.type == pygame.QUIT:
                             pygame.quit()
                             quit()
                 pause()
+            elif evento.type == pygame.KEYDOWN and evento.key == pygame.K_ESCAPE:
+                pygame.quit()
+                quit()
 
 
         Dog_pos = (xDog, yDog)
@@ -186,6 +188,7 @@ def start():
         tela.blit(fundo, (posicaoXFundo, posicaoYFundo))
         tela.blit(fundo2, (posicaoXFundo2, posicaoYFundo2))
         tela.blit(frasePontos, (10, 10))
+        tela.blit(frasePause, (350, 650))
         posicaoXFundo -= velocidadeFundo
         posicaoXFundo2 -= velocidadeFundo
         if posicaoXFundo <= -1000:

@@ -62,3 +62,4 @@ def maiorPontuador():
             dataJogada = info[1]            
 
     return nome_maior, maior_pontos, dataJogada
+
