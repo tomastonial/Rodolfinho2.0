@@ -1,24 +1,18 @@
 import os,time,random, pygame
-from recursos.funcoes import *
+from recursos.trabalho import *
 
 limparTela()
 inicializarBancoDeDados()
-nome_maior, maior_pontos, dataJogada = maiorPontuador()
+nick_maior, maior_pontos, dataJogada = maiorPontuador()
 pygame.init()
 
-# while True:
-#     nome = input("NICKNAME: ")
-#     if len(nome) > 0:
-#         break
-#     else:
-#         print("O nickname deve conter pelo menos 1 caractere.")
+nick = pegarNick()
     
 tamanho = (1000, 700)
 pygame.display.set_caption("RODOLFO")
-
+tela = pygame.display.set_mode(tamanho)
 fonte = pygame.font.SysFont("Arial", 30)
 relogio = pygame.time.Clock()
-tela = pygame.display.set_mode(tamanho)
 branco = (255,255,255)
 preto = (0,0,0)
 imagem = pygame.image.load("bases/Rua.jpg")
@@ -29,6 +23,8 @@ fundo = pygame.transform.scale(imagem, tamanho)
 fundo2 = pygame.transform.scale(imagem2, tamanho)
 img_pause = pygame.image.load("bases/imagem_pause.png")
 img_inicio = pygame.image.load("bases/imagem_inicio.png")
+img_derrota = pygame.image.load("bases/imagem_derrota.png")
+img_derrota = pygame.transform.scale(img_derrota, tamanho)
 carroAzul = pygame.image.load("bases/CarroB.png")
 carroAzul = pygame.transform.scale(carroAzul, (100, 137.5))
 carroAzulD = pygame.transform.rotate(carroAzul, 90)
@@ -47,15 +43,23 @@ frasePause = fonte.render("PRESS SPACE TO PAUSE", True, branco)
 fraseResume = fonte.render("PRESSIONE SPACE PARA VOLTAR", True, branco)
 rodando = True
 pausado = False
+osso = pygame.image.load("bases/osso.png").convert_alpha()
+tamanhoOsso = 50
+crescendo = True
+
 pombo = pygame.image.load("bases/pombo.png")
 pombo = pygame.transform.scale(pombo, (50, 70))
 pomboE = pygame.transform.rotate(pombo, 90)
 pomboD = pygame.transform.rotate(pombo, -90)
-fps = pygame.time.Clock()
 
-# def mostrarMaiorPontuador():
+fps = pygame.time.Clock()
+pontos = 0
+
 
 def inicio():
+    tela.blit(img_inicio, (0,0))
+    pygame.display.update()
+
     startButton = pygame.Rect(378, 348, 254, 60)
     maiorButton = pygame.Rect(378, 428, 254, 60)
 
@@ -74,7 +78,7 @@ def inicio():
             if startButton.collidepoint(evento.pos):
                 start()
             elif maiorButton.collidepoint(evento.pos):
-                print(f"MAIOR PONTUADOR: {nome_maior} - {maior_pontos} pontos - {dataJogada}")
+                maiorPontuador()
         elif evento.type == pygame.KEYDOWN and evento.key == pygame.K_ESCAPE:
             pygame.quit()
             quit()
@@ -82,8 +86,7 @@ def inicio():
                 pygame.quit()
                 quit()
             
-    tela.blit(img_inicio, (0,0))
-    pygame.display.update()
+
 
 
 
@@ -94,10 +97,17 @@ def pause():
 
 
 def start():
-    
+    global pontos
+    global tamanhoOsso
+    global crescendo
+    global osso
     ultimo_ponto = pygame.time.get_ticks()
+    
     pontos = 0
     frasePontos = fonte.render(f"PONTOS: {pontos}", True, branco)
+
+    tamanhoOsso = 50
+    crescendo = True
 
     posicaoXFundo = 0
     posicaoYFundo = 0
@@ -109,6 +119,7 @@ def start():
     velocidadeCarroAzul = 2
     velocidadeCarroVermelho = 3
     velocidadeCarroVerde = 4
+    velocidadePombo = 8
 
 
     yDogFaixa1 = 80
@@ -138,8 +149,8 @@ def start():
     xCarroR = 0
     xCarroG = 0
     # Pombo
-    xPombo = 1000
-    yPombo = random.randint(80, 500)
+    yPombo = posicaoPomboY()
+    xPombo = direcaoPombo()
 
     # Posiçao inicial dos carros
     if yCarroB == 95 or yCarroB == 235:
@@ -154,10 +165,6 @@ def start():
         xCarroG = 1000
     else:
         xCarroG = 0
-    if yPombo == 95 or yPombo == 235:
-        xPombo = 1000
-    else:
-        xPombo = 0
     while True:
         agora = pygame.time.get_ticks()
         if agora - ultimo_ponto >= 1000:
@@ -188,7 +195,6 @@ def start():
                         elif evento.type == pygame.QUIT:
                             pygame.quit()
                             quit()
-                pause()
             elif evento.type == pygame.KEYDOWN and evento.key == pygame.K_ESCAPE:
                 pygame.quit()
                 quit()
@@ -200,12 +206,14 @@ def start():
         tela.blit(fundo2, (posicaoXFundo2, posicaoYFundo2))
         tela.blit(frasePontos, (10, 10))
         tela.blit(frasePause, (350, 650))
+        tela.blit(osso, (900, 20))
         posicaoXFundo -= velocidadeFundo
         posicaoXFundo2 -= velocidadeFundo
         if posicaoXFundo <= -1000:
             posicaoXFundo = 1000
         if posicaoXFundo2 <= -1000:
             posicaoXFundo2 = 1000
+
         # Movimento do carro azul
 
         tela.blit(cachorro, (Dog_pos))
@@ -223,6 +231,7 @@ def start():
                 xCarroB = 1000
             else:
                 xCarroB = -100
+
         # Movimento do carro vermelho
         if yCarroR == 95 or yCarroR == 235:
             tela.blit(carroVermelhoE, (xCarroR, yCarroR))
@@ -254,31 +263,79 @@ def start():
             else:
                 xCarroG = -100
         # Movimento do pombo
-        if yPombo == 95 or yPombo == 235:
-            tela.blit(pomboE, (xPombo, yPombo))
-            xPombo -= 8
-        else:
+
+        if xPombo >= -80 and xPombo <= 999:
             tela.blit(pomboD, (xPombo, yPombo))
-            xPombo += 8
-        if xPombo < -200 or xPombo > 1200:
-
-            yPombo = random.choice(faixas)
-
-            if yPombo in [95, 235]:
-                xPombo = 1000
-            else:
-                xPombo = -100
-
+            xPombo += velocidadePombo
+            if xPombo >= 1000:
+                yPombo = posicaoPomboY()
+                xPombo = direcaoPombo()
+        else:
+            tela.blit(pomboE, (xPombo, yPombo))
+            xPombo -= velocidadePombo
+            if xPombo <= -80:
+                yPombo = posicaoPomboY()
+                xPombo = direcaoPombo()
+        print(f"Pombo: ({xPombo}, {yPombo})")
+        
         hitBoxDog = pygame.Rect(xDog, yDog, 100, 137.5)
         hitBoxCarroB = pygame.Rect(xCarroB, yCarroB, 100, 60)
         hitBoxCarroR = pygame.Rect(xCarroR, yCarroR, 100, 60)
         hitBoxCarroG = pygame.Rect(xCarroG, yCarroG, 100, 60)
+        # Faz o osso crescer
+        if crescendo:
+            tamanhoOsso += 0.2
+
+            if tamanhoOsso >= 60:
+                crescendo = False
+
+        # Faz o osso diminuir
+        else:
+            tamanhoOsso -= 0.2
+
+            if tamanhoOsso <= 50:
+                crescendo = True
+
+        # Redimensiona a imagem do osso
+        osso = pygame.transform.scale(
+            osso,
+            (int(tamanhoOsso), int(tamanhoOsso))
+        )
+
+        # Mantém o osso centralizado no canto
+        xOsso = 925 - tamanhoOsso / 2
+        yOsso = 45 - tamanhoOsso / 2
+
         morte = pygame.Rect.colliderect(hitBoxDog, hitBoxCarroB) or pygame.Rect.colliderect(hitBoxDog, hitBoxCarroR) or pygame.Rect.colliderect(hitBoxDog, hitBoxCarroG)
         if morte:
             print("Morreu")
-            quit()
+            perdeu()
+            break
         fps.tick(120)   
         pygame.display.update()
 
-while rodando:
-    inicio()
+def perdeu():
+    tela.blit(img_derrota, (0,0))
+    pygame.display.update()
+    escreverDados(nick, pontos)
+    print("VOCÊ PERDEU!")
+
+    playAgainButton = pygame.Rect(516, 550, 225, 85)
+    homeButton = pygame.Rect(257, 550, 225, 85)
+
+    for evento in pygame.event.get():
+        if evento.type == pygame.KEYDOWN and evento.key == pygame.K_ESCAPE:
+            pygame.quit()
+            quit()
+        elif evento.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+        elif evento.type == pygame.MOUSEBUTTONDOWN:
+            if playAgainButton.collidepoint(evento.pos):
+                start()
+            elif homeButton.collidepoint(evento.pos):
+                inicio()
+
+if nick != None:
+    while rodando:
+        inicio()
