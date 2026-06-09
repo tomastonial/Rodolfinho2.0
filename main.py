@@ -47,6 +47,10 @@ frasePause = fonte.render("PRESS SPACE TO PAUSE", True, branco)
 fraseResume = fonte.render("PRESSIONE SPACE PARA VOLTAR", True, branco)
 rodando = True
 pausado = False
+pombo = pygame.image.load("bases/pombo.png")
+pombo = pygame.transform.scale(pombo, (50, 70))
+pomboE = pygame.transform.rotate(pombo, 90)
+pomboD = pygame.transform.rotate(pombo, -90)
 fps = pygame.time.Clock()
 
 # def mostrarMaiorPontuador():
@@ -133,6 +137,9 @@ def start():
     xCarroB = 0
     xCarroR = 0
     xCarroG = 0
+    # Pombo
+    xPombo = 1000
+    yPombo = random.randint(80, 500)
 
     # Posiçao inicial dos carros
     if yCarroB == 95 or yCarroB == 235:
@@ -147,6 +154,10 @@ def start():
         xCarroG = 1000
     else:
         xCarroG = 0
+    if yPombo == 95 or yPombo == 235:
+        xPombo = 1000
+    else:
+        xPombo = 0
     while True:
         agora = pygame.time.get_ticks()
         if agora - ultimo_ponto >= 1000:
@@ -242,6 +253,22 @@ def start():
                 xCarroG = 1000
             else:
                 xCarroG = -100
+        # Movimento do pombo
+        if yPombo == 95 or yPombo == 235:
+            tela.blit(pomboE, (xPombo, yPombo))
+            xPombo -= 8
+        else:
+            tela.blit(pomboD, (xPombo, yPombo))
+            xPombo += 8
+        if xPombo < -200 or xPombo > 1200:
+
+            yPombo = random.choice(faixas)
+
+            if yPombo in [95, 235]:
+                xPombo = 1000
+            else:
+                xPombo = -100
+
         hitBoxDog = pygame.Rect(xDog, yDog, 100, 137.5)
         hitBoxCarroB = pygame.Rect(xCarroB, yCarroB, 100, 60)
         hitBoxCarroR = pygame.Rect(xCarroR, yCarroR, 100, 60)
