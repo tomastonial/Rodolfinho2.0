@@ -1,4 +1,4 @@
-import os,time,random, pygame
+import os,time,random, pygame, pyttsx3
 from recursos.trabalho import *
 
 limparTela()
@@ -12,6 +12,7 @@ tamanho = (1000, 700)
 pygame.display.set_caption("RODOLFO")
 tela = pygame.display.set_mode(tamanho)
 fonte = pygame.font.SysFont("Arial", 30)
+fontePontos = pygame.font.SysFont("Arial", 30)
 relogio = pygame.time.Clock()
 branco = (255,255,255)
 preto = (0,0,0)
@@ -41,11 +42,13 @@ cachorro = pygame.image.load("bases/cachorrosemfundo.png")
 cachorro = pygame.transform.rotate(cachorro, -90)
 frasePause = fonte.render("PRESS SPACE TO PAUSE", True, branco)
 fraseResume = fonte.render("PRESSIONE SPACE PARA VOLTAR", True, branco)
+maiorPontuadorTexto = fonte.render(f"MAIOR PONTUADOR: \n {nick_maior} \n {maior_pontos} pontos \n {dataJogada}", True, branco)
 rodando = True
 pausado = False
 osso = pygame.image.load("bases/osso.png").convert_alpha()
 tamanhoOsso = 50
 crescendo = True
+som = pygame.mixer.Sound("bases/som.mp3")
 
 pombo = pygame.image.load("bases/pombo.png")
 pombo = pygame.transform.scale(pombo, (50, 70))
@@ -58,6 +61,7 @@ pontos = 0
 
 def inicio():
     tela.blit(img_inicio, (0,0))
+    tela.blit(maiorPontuadorTexto, (400, 550))
     pygame.display.update()
 
     startButton = pygame.Rect(378, 348, 254, 60)
@@ -103,6 +107,9 @@ def start():
     global osso
     ultimo_ponto = pygame.time.get_ticks()
     
+    som.set_volume(0.5)
+    som.play(-1)
+
     pontos = 0
     frasePontos = fonte.render(f"PONTOS: {pontos}", True, branco)
 
@@ -189,9 +196,11 @@ def start():
                 pausado = True
                 pause()
                 while pausado:
+                    som.stop()
                     for evento in pygame.event.get():
                         if  evento.type == pygame.KEYDOWN and evento.key == pygame.K_SPACE:
                             pausado = False
+                            som.play(-1)
                         elif evento.type == pygame.QUIT:
                             pygame.quit()
                             quit()
@@ -309,33 +318,48 @@ def start():
         morte = pygame.Rect.colliderect(hitBoxDog, hitBoxCarroB) or pygame.Rect.colliderect(hitBoxDog, hitBoxCarroR) or pygame.Rect.colliderect(hitBoxDog, hitBoxCarroG)
         if morte:
             print("Morreu")
+            som.stop()
+            rodando = False
             perdeu()
             break
         fps.tick(120)   
         pygame.display.update()
 
 def perdeu():
-    tela.blit(img_derrota, (0,0))
-    pygame.display.update()
     escreverDados(nick, pontos)
     print("VOCÊ PERDEU!")
 
     playAgainButton = pygame.Rect(516, 550, 225, 85)
     homeButton = pygame.Rect(257, 550, 225, 85)
 
-    for evento in pygame.event.get():
-        if evento.type == pygame.KEYDOWN and evento.key == pygame.K_ESCAPE:
-            pygame.quit()
-            quit()
-        elif evento.type == pygame.QUIT:
+    pygame.event.clear()
+    while True:
+        tela.blit(img_derrota, (0,0))
+        frasePontosMorte = fontePontos.render(f"PONTOS: {pontos}", True, branco)
+        tela.blit(frasePontosMorte, (420, 490))
+        tela.blit(maiorPontuadorTexto, (10, 530))
+        pygame.display.update()
+
+        for evento in pygame.event.get():
+            if evento.type == pygame.KEYDOWN and evento.key == pygame.K_ESCAPE:
                 pygame.quit()
                 quit()
-        elif evento.type == pygame.MOUSEBUTTONDOWN:
-            if playAgainButton.collidepoint(evento.pos):
-                start()
-            elif homeButton.collidepoint(evento.pos):
-                inicio()
+            elif evento.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+            elif evento.type == pygame.MOUSEBUTTONDOWN:
+                if playAgainButton.collidepoint(evento.pos):
+                    start()
+                    return
+                elif homeButton.collidepoint(evento.pos):
+                    inicio()
+                    return
+
+        fps.tick(60)
+        
 
 if nick != None:
     while rodando:
         inicio()
+    else:
+        perdeu()

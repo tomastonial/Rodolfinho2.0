@@ -33,9 +33,8 @@ def inicializarBancoDeDados():
         banco = open("base.atitus", "w")
 
 def escreverDados(nick, pontos):
-    banco = open("base.atitus", "r")
-    dados = banco.read()
-    banco.close()
+    with open("base.atitus", "r") as banco:
+        dados = banco.read()
 
     if dados != "":
         dadosDict = json.loads(dados)
@@ -43,13 +42,17 @@ def escreverDados(nick, pontos):
         dadosDict = {}
 
     data_atual = datetime.now().strftime("%d/%m/%Y")
-    hora_atual = datetime.now().strftime("%H:%M:%S")
-    data_atual = f"{data_atual} {hora_atual}"
-    dadosDict[nick] = (pontos, data_atual)
 
-    banco = open("base.atitus", "w")
-    banco.write(json.dumps(dadosDict))
-    banco.close()
+    # Usuário não existe ainda
+    if nick not in dadosDict:
+        dadosDict[nick] = (pontos, data_atual)
+
+    # Usuário existe, verifica se bateu o recorde
+    elif pontos > dadosDict[nick][0]:
+        dadosDict[nick] = (pontos, data_atual)
+
+    with open("base.atitus", "w") as banco:
+        banco.write(json.dumps(dadosDict))
 
 def maiorPontuador():
     banco = open("base.atitus", "r")
