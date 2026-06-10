@@ -49,6 +49,7 @@ osso = pygame.image.load("bases/osso.png").convert_alpha()
 tamanhoOsso = 50
 crescendo = True
 som = pygame.mixer.Sound("bases/som.mp3")
+choro = pygame.mixer.Sound("bases/cachorro chorando.mp3")
 
 pombo = pygame.image.load("bases/pombo.png")
 pombo = pygame.transform.scale(pombo, (50, 70))
@@ -319,6 +320,7 @@ def start():
         if morte:
             print("Morreu")
             som.stop()
+            choro.play()
             rodando = False
             perdeu()
             break
@@ -349,9 +351,11 @@ def perdeu():
                 quit()
             elif evento.type == pygame.MOUSEBUTTONDOWN:
                 if playAgainButton.collidepoint(evento.pos):
+                    choro.stop()
                     start()
                     return
                 elif homeButton.collidepoint(evento.pos):
+                    choro.stop()
                     inicio()
                     return
 
