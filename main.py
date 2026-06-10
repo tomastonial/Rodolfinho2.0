@@ -288,7 +288,6 @@ def start():
             if xPombo <= -80:
                 yPombo = posicaoPomboY()
                 xPombo = direcaoPombo()
-        print(f"Pombo: ({xPombo}, {yPombo})")
         
         hitBoxDog = pygame.Rect(xDog, yDog, 100, 137.5)
         hitBoxCarroB = pygame.Rect(xCarroB, yCarroB, 100, 60)
