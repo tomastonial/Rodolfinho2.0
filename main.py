@@ -1,4 +1,4 @@
-import os,time,random, pygame, pyttsx3
+import os,time,random, pygame, pyttsx3, cx_Freeze
 from recursos.trabalho import *
 
 limparTela()

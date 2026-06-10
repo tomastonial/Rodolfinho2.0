@@ -1,0 +1,6 @@
+README.md
+setup.py
+Rodolfinho_2.0.egg-info/PKG-INFO
+Rodolfinho_2.0.egg-info/SOURCES.txt
+Rodolfinho_2.0.egg-info/dependency_links.txt
+Rodolfinho_2.0.egg-info/top_level.txt
