@@ -1,0 +1,6 @@
+README.md
+setup.py
+Rodolfo.egg-info/PKG-INFO
+Rodolfo.egg-info/SOURCES.txt
+Rodolfo.egg-info/dependency_links.txt
+Rodolfo.egg-info/top_level.txt
