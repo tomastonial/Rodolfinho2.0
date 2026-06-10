@@ -24,16 +24,16 @@ def direcaoPombo():
 
 def inicializarBancoDeDados():
     try:
-        banco = open("base.atitus", "r")
+        banco = open("log.dat", "r")
         print("Banco de dados encontrado!")
         aguardar(2)
     except:
         print("Banco de dados não encontrado, criando um novo...")
         aguardar(2)
-        banco = open("base.atitus", "w")
+        banco = open("log.dat", "w")
 
 def escreverDados(nick, pontos):
-    with open("base.atitus", "r") as banco:
+    with open("log.dat", "r") as banco:
         dados = banco.read()
 
     if dados != "":
@@ -51,11 +51,11 @@ def escreverDados(nick, pontos):
     elif pontos > dadosDict[nick][0]:
         dadosDict[nick] = (pontos, data_atual)
 
-    with open("base.atitus", "w") as banco:
+    with open("log.dat", "w") as banco:
         banco.write(json.dumps(dadosDict))
 
 def maiorPontuador():
-    banco = open("base.atitus", "r")
+    banco = open("log.dat", "r")
     dados = banco.read()
     banco.close()
 

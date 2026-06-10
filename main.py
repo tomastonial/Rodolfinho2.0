@@ -46,7 +46,8 @@ maiorPontuadorTexto = fonte.render(f"MAIOR PONTUADOR: \n {nick_maior} \n {maior_
 rodando = True
 pausado = False
 osso = pygame.image.load("bases/osso.png").convert_alpha()
-tamanhoOsso = 50
+larOsso = 50
+altOsso = 50
 crescendo = True
 som = pygame.mixer.Sound("bases/som.mp3")
 choro = pygame.mixer.Sound("bases/cachorro chorando.mp3")
@@ -114,7 +115,8 @@ def start():
     pontos = 0
     frasePontos = fonte.render(f"PONTOS: {pontos}", True, branco)
 
-    tamanhoOsso = 50
+    larOsso = 50
+    altOsso = 50
     crescendo = True
 
     posicaoXFundo = 0
@@ -216,7 +218,7 @@ def start():
         tela.blit(fundo2, (posicaoXFundo2, posicaoYFundo2))
         tela.blit(frasePontos, (10, 10))
         tela.blit(frasePause, (350, 650))
-        tela.blit(osso, (900, 20))
+        tela.blit(osso, (900, 325))
         posicaoXFundo -= velocidadeFundo
         posicaoXFundo2 -= velocidadeFundo
         if posicaoXFundo <= -1000:
@@ -294,27 +296,26 @@ def start():
         hitBoxCarroG = pygame.Rect(xCarroG, yCarroG, 100, 60)
         # Faz o osso crescer
         if crescendo:
-            tamanhoOsso += 0.2
-
-            if tamanhoOsso >= 60:
+            larOsso += 0.3
+            altOsso += 0.1
+            if larOsso >= 60:
                 crescendo = False
+            
+        
 
         # Faz o osso diminuir
         else:
-            tamanhoOsso -= 0.2
-
-            if tamanhoOsso <= 50:
+            larOsso -= 0.3
+            altOsso -= 0.1
+            if larOsso <= 50:
                 crescendo = True
 
         # Redimensiona a imagem do osso
         osso = pygame.transform.scale(
             osso,
-            (int(tamanhoOsso), int(tamanhoOsso))
+            (int(larOsso), int(altOsso))
         )
 
-        # Mantém o osso centralizado no canto
-        xOsso = 925 - tamanhoOsso / 2
-        yOsso = 45 - tamanhoOsso / 2
 
         morte = pygame.Rect.colliderect(hitBoxDog, hitBoxCarroB) or pygame.Rect.colliderect(hitBoxDog, hitBoxCarroR) or pygame.Rect.colliderect(hitBoxDog, hitBoxCarroG)
         if morte:
